@@ -8,5 +8,6 @@ npm/tests/test/*.js.map
 build/
 .cache/
 sdk/
-
 demo/.godot/
+.direnv
+result

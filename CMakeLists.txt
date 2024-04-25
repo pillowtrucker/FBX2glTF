@@ -33,11 +33,11 @@ if (NOT FBXSDK_FOUND)
   )
 endif()
 
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan_paths.cmake")
-  message(FATAL_ERROR
-    "The Conan package manager must run ('install') first. ${typical_usage_str}")
-endif()
-include("${CMAKE_BINARY_DIR}/conan_paths.cmake")
+#if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan_paths.cmake")
+#  message(FATAL_ERROR
+#    "The Conan package manager must run ('install') first. ${typical_usage_str}")
+#endif()
+#include("${CMAKE_BINARY_DIR}/conan_paths.cmake")
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads REQUIRED)
@@ -47,70 +47,74 @@ list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_BINARY_DIR}")
 # stuff we get from Conan
 find_package(Boost 1.76 COMPONENTS system filesystem program_options REQUIRED )
 find_package(ZLIB MODULE REQUIRED)
-find_package(fmt MODULE REQUIRED)
+find_package(fmt REQUIRED)
 find_package(Iconv MODULE REQUIRED)
 find_package(LibXml2  MODULE REQUIRED)
 
 # create a compilation database for e.g. clang-tidy
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+find_package(Draco REQUIRED)
+
 # DRACO
-ExternalProject_Add(Draco
-  GIT_REPOSITORY https://github.com/google/draco
-  GIT_TAG 8786740086a9f4d83f44aa83badfbea4dce7a1b5
-  PREFIX draco
-  INSTALL_DIR
-  CMAKE_ARGS
-        -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
-        -DBUILD_FOR_GLTF=1
-)
-set(DRACO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/draco/include")
+#ExternalProject_Add(Draco
+#  GIT_REPOSITORY https://github.com/google/draco
+#  GIT_TAG 8786740086a9f4d83f44aa83badfbea4dce7a1b5
+#  PREFIX draco
+#  INSTALL_DIR
+#  CMAKE_ARGS
+#        -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
+#        -DBUILD_FOR_GLTF=1
+#)
+#set(DRACO_INCLUDE_DIR "${CMAKE_BINARY_DIR}/draco/include")
 find_file(FEDORA_FOUND fedora-release
   PATHS /etc
 )
-if (WIN32)
-   set(DRACO_LIB "${CMAKE_BINARY_DIR}/draco/lib/${CMAKE_SHARED_MODULE_PREFIX}draco.lib")
-elseif(FEDORA_FOUND)
-  set(DRACO_LIB "${CMAKE_BINARY_DIR}/draco/lib64/${CMAKE_SHARED_MODULE_PREFIX}draco.a")
-else()
-  set(DRACO_LIB "${CMAKE_BINARY_DIR}/draco/lib/${CMAKE_SHARED_MODULE_PREFIX}draco.a")
-endif()
+#if (WIN32)
+#   set(DRACO_LIB "${CMAKE_BINARY_DIR}/draco/lib/${CMAKE_SHARED_MODULE_PREFIX}draco.lib")
+#elseif(FEDORA_FOUND)
+#  set(DRACO_LIB "${CMAKE_BINARY_DIR}/draco/lib64/${CMAKE_SHARED_MODULE_PREFIX}draco.a")
+#else()
+#  set(DRACO_LIB "${CMAKE_BINARY_DIR}/draco/lib64/${CMAKE_SHARED_MODULE_PREFIX}draco.a")
+#endif()
 
 # MATHFU
-set(mathfu_build_benchmarks OFF CACHE BOOL "")
-set(mathfu_build_tests OFF CACHE BOOL "")
-ExternalProject_Add(MathFu
-  PREFIX mathfu
-  GIT_REPOSITORY https://github.com/google/mathfu
-  GIT_TAG v1.1.0
-  CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "Skipping MathFu configure step."
-  BUILD_COMMAND ${CMAKE_COMMAND} -E echo "Skipping MathFu build step."
-  INSTALL_COMMAND ${CMAKE_COMMAND} -E echo "Skipping MathFu install step."
-)
+#set(mathfu_build_benchmarks OFF CACHE BOOL "")
+#set(mathfu_build_tests OFF CACHE BOOL "")
+#ExternalProject_Add(MathFu
+#  PREFIX mathfu
+#  GIT_REPOSITORY https://github.com/google/mathfu
+#  GIT_TAG v1.1.0
+#  CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "Skipping MathFu configure step."
+#  BUILD_COMMAND ${CMAKE_COMMAND} -E echo "Skipping MathFu build step."
+#  INSTALL_COMMAND ${CMAKE_COMMAND} -E echo "Skipping MathFu install step."
+#)
 set(MATHFU_INCLUDE_DIRS
-        "${CMAKE_BINARY_DIR}/mathfu/src/MathFu/include/"
-        "${CMAKE_BINARY_DIR}/mathfu/src/MathFu/dependencies/vectorial/include")
-
+        "${CMAKE_SOURCE_DIR}/mathfu/include"
+        "${CMAKE_SOURCE_DIR}/mathfu/dependencies/vectorial/include")
+#add_subdirectory(fifo_map)
 # OrderedMap
-ExternalProject_Add(FiFoMap
-  PREFIX fifo_map
-  GIT_REPOSITORY https://github.com/nlohmann/fifo_map
-  CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "Skipping FiFoMap configure step."
-  BUILD_COMMAND ${CMAKE_COMMAND} -E echo "Skipping FiFoMap build step."
-  INSTALL_COMMAND ${CMAKE_COMMAND} -E echo "Skipping FiFoMap install step."
-)
-set(FIFO_MAP_INCLUDE_DIR "${CMAKE_BINARY_DIR}/fifo_map/src/FiFoMap/src")
+#ExternalProject_Add(FiFoMap
+#  PREFIX fifo_map
+#  GIT_REPOSITORY https://github.com/nlohmann/fifo_map
+#  CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "Skipping FiFoMap configure step."
+#  BUILD_COMMAND ${CMAKE_COMMAND} -E echo "Skipping FiFoMap build step."
+#  INSTALL_COMMAND ${CMAKE_COMMAND} -E echo "Skipping FiFoMap install step."
+#)
+set(FIFO_MAP_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/fifo_map/src")
 
 
 # cppcodec
-ExternalProject_Add(CPPCodec
-  PREFIX cppcodec
-  GIT_REPOSITORY https://github.com/tplgy/cppcodec
-  CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "Skipping CPPCodec configure step."
-  BUILD_COMMAND ${CMAKE_COMMAND} -E echo "Skipping CPPCodec build step."
-  INSTALL_COMMAND ${CMAKE_COMMAND} -E echo "Skipping CPPCodec install step."
-)
-set(CPPCODEC_INCLUDE_DIR "${CMAKE_BINARY_DIR}/cppcodec/src/CPPCodec")
+#ExternalProject_Add(CPPCodec
+#  PREFIX cppcodec
+#  GIT_REPOSITORY https://github.com/tplgy/cppcodec
+#  CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "Skipping CPPCodec configure step."
+#  BUILD_COMMAND ${CMAKE_COMMAND} -E echo "Skipping CPPCodec build step."
+#  INSTALL_COMMAND ${CMAKE_COMMAND} -E echo "Skipping CPPCodec install step."
+#)
+#set(CPPCODEC_INCLUDE_DIR "${CMAKE_BINARY_DIR}/cppcodec/src/CPPCodec")
+pkg_check_modules(cppcodec REQUIRED)
+pkg_check_modules(Draco REQUIRED)
 
 if (APPLE)
     find_library(CF_FRAMEWORK CoreFoundation)
@@ -185,13 +189,13 @@ set_target_properties(libFBX2glTF PROPERTIES OUTPUT_NAME "libFBX2glTF")
 add_executable(FBX2glTF src/FBX2glTF.cpp)
 set_target_properties(FBX2glTF PROPERTIES OUTPUT_NAME "FBX2glTF")
 
-add_dependencies(libFBX2glTF
-  Draco
-  MathFu
-  FiFoMap
-  CPPCodec
-)
-
+#add_dependencies(libFBX2glTF
+#  Draco
+#  MathFu
+#  FiFoMap
+#  CPPCodec
+#)
+#add_library(libdraco ${DRACO_LIB})
 if (NOT MSVC)
   # Disable annoying & spammy warning from FBX SDK header file
   target_compile_options(libFBX2glTF PRIVATE
@@ -206,7 +210,9 @@ endif()
 
 target_link_libraries(libFBX2glTF
   ${FRAMEWORKS}
-  ${DRACO_LIB}
+#  libdraco
+  draco
+#  ${Draco_LINK_LIBRARIES}
   Boost::system
   Boost::filesystem
   optimized ${FBXSDK_LIBRARY}
