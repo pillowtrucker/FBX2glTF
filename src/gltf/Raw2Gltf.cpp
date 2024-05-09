@@ -10,7 +10,7 @@
 
 #include <cassert>
 #include <cstdint>
-#include <fstream>
+#include <boost/nowide/fstream.hpp>
 #include <iostream>
 
 #include <stb_image.h>
@@ -77,7 +77,7 @@ static const std::vector<TriangleIndex> getIndexArray(const RawModel& raw) {
 }
 
 ModelData* Raw2Gltf(
-    std::ofstream& gltfOutStream,
+    boost::nowide::ofstream& gltfOutStream,
     const std::string& outputFolder,
     const RawModel& raw,
     const GltfOptions& options) {
@@ -155,6 +155,14 @@ ModelData* Raw2Gltf(
 
     for (int i = 0; i < raw.GetAnimationCount(); i++) {
       const RawAnimation& animation = raw.GetAnimation(i);
+      
+      if (animation.channels.empty()) {
+        fmt::printf(
+          "Animation '%s' has no channels, skipped\n",
+          animation.name.c_str()
+        );
+        continue;
+      }
 
       auto accessor = gltf->AddAccessorAndView(buffer, GLT_FLOAT, animation.times);
       accessor->min = {*std::min_element(std::begin(animation.times), std::end(animation.times))};
