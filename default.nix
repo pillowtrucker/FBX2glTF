@@ -28,7 +28,7 @@ let
   };
 in llvmPackages_18.stdenv.mkDerivation rec {
   pname = "fbx2gltf";
-  version = "0.1.0";
+  version = "7cf9f0acf005bdf89e8b4b18746aa687872da403";
   srcs = [ thishere sdk mathfu fifo_map ];
   stdenv = llvmPackages_18.stdenv;
   nativeBuildInputs = [ cmake ];
